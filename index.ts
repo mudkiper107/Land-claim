@@ -188,7 +188,7 @@ command.register(`staffclaim`,'manage staff claims',1).overload((params, origin,
 })
 
 
-/** Checks if the player owns the land they are in and removes it if they don't.
+/** Checks if the player owns the land they are in and removes it if they do.
  * @param xuid The player's xuid
  * @param name The player's name
  * @param pos The player's current position
@@ -230,7 +230,7 @@ export function removeClaim(xuid:string,name:string,pos:any):{result:boolean,out
 }
 
 
-/** Che
+/** Sets a land claim for a player
  * @param xuid The player's xuid
  * @param name The player's name
  * @param pos1 The first set of coordinates corresponding to one of the corners of the claim
@@ -299,7 +299,7 @@ export function setClaim(xuid:string,name:string,pos1:any,pos2:any):{result:bool
  * @return boolean if the claims overlap or not*/
 function checkClaimOverlap(pos1: any, pos2: any):boolean{
     for (let x=0;x<claimsDB.length;x++){
-        let claim = claimsDB[x].claims.find((result: { x: number; z: number; xx: number; zz: number; })=>result.x >= pos1.x && result.z >= pos1.z && result.xx <= pos2.x &&  result.zz <= pos2.z )
+        let claim = claimsDB[x].claims.find((result: { x: number; z: number; xx: number; zz: number; })=>(result.x >= pos1.x && result.z >= pos1.z && result.xx <= pos2.x &&  result.zz <= pos2.z ) || (result.x <= pos1.x && result.z <= pos1.z && result.xx >= pos2.x &&  result.zz >= pos2.z ))
         if (claim !== undefined){
             return true
         }
