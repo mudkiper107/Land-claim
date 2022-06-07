@@ -1,2 +1,7 @@
-# Land-claim
-Land claim api for bdsx
+
+# Land Claim API
+Allows for land claiming to be implemented into bdsx
+
+```ts
+
+```

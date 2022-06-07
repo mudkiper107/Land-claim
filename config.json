@@ -1,0 +1,8 @@
+{
+  "save_interval": 10,
+  "ops_bypass": false,
+  "claim_limit": {
+    "limit": true,
+    "amount": 5
+  }
+}
