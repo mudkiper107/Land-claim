@@ -1,7 +1,9 @@
 
 # Land Claim API
 Allows for land claiming to be implemented into bdsx. This was made to be added to existing plugins like economy and such
-#####
+####
+This plugin adds 3 functions `setClaim`, `removeClaim`, and `checkClaimed` which set, remove or check if a position is claimed
+####
 Example usage
 ```ts
 import {command} from "bdsx/command";

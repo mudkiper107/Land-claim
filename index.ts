@@ -4,10 +4,13 @@ import {exec} from "child_process";
 import {events} from "bdsx/event";
 import * as config from "./config.json"
 import {command} from "bdsx/command";
-import {CxxString} from "bdsx/nativetype";
-
+import {bool_t, CxxString} from "bdsx/nativetype";
 import {CommandPosition} from "bdsx/bds/command";
 import {CANCEL} from "bdsx/common";
+import { procHacker } from "bdsx/prochacker";
+import { BlockLegacy } from "bdsx/bds/block";
+import { BlockPos } from "bdsx/bds/blockpos";
+import { Actor } from "bdsx/bds/actor";
 
 let claimsDB:any;
 let save:any
@@ -17,18 +20,22 @@ bedrockServer.afterOpen().then(()=>{
         exec(`echo [] > claims.json`)
         console.log(`[Land_claim] No database found. Creating one`)
     }
-    fs.readFile('./claims.json',(err,data)=>{
-        if (err){
-            console.log(`[Land_claim] There was an error reading the claims database:`, err)
-            return
-        }
-        console.log(`[Land_claim] Claim database has been loaded`)
-        claimsDB = JSON.parse(data.toString())
-    })
-    save = setInterval(function (){
-        fs.writeFile('./claims.json', JSON.stringify(claimsDB), ()=>{
+    setTimeout(function (){
+        //Gives existsSync sometime to make a database if none is found
+        fs.readFile('./claims.json',(err,data)=>{
+            if (err){
+                console.log(`[Land_claim] There was an error reading the claims database:`, err)
+                return
+            }
+            console.log(`[Land_claim] Claim database has been loaded`)
+            claimsDB = JSON.parse(data.toString())
         })
-    },1000*60*config.save_interval)
+        save = setInterval(function (){
+            fs.writeFile('./claims.json', JSON.stringify(claimsDB), ()=>{
+            })
+        },1000*60*config.save_interval)
+    },250)
+
 })
 events.serverStop.on(()=>{
     clearInterval(save)
@@ -310,7 +317,7 @@ function checkClaimOverlap(pos1: any, pos2: any):boolean{
 /**Checks if the position is in a claim
  * @return a boolean with a value of false if not claimed and true if it is claimed. If it is claimed it will return the claim info,
  * the index of the user whose claimed it and the index of their claim*/
-function checkClaimed(pos1: any):{claimed:boolean,place?:number,claim_place?:number}{
+export function checkClaimed(pos1: any):{claimed:boolean,place?:number,claim_place?:number}{
     for (let x=0;x<claimsDB.length;x++){
         let claim = claimsDB[x].claims.find((result: { x: number; z: number; xx: number; zz: number; })=>result.x >= pos1.x && result.z >= pos1.z && result.xx <= pos1.x && result.zz <= pos1.z)
         if (claim !== undefined){
@@ -320,3 +327,4 @@ function checkClaimed(pos1: any):{claimed:boolean,place?:number,claim_place?:num
     }
     return {claimed:false}
 }
+
